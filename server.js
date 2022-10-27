@@ -1,14 +1,15 @@
 const express = require('express');
 const path = require('path');
-require('dotenv').config()
+
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+require('dotenv').config()
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.set('view', path.join(__dirname, 'public'));
+app.set('views', path.join(__dirname, 'public'));
 app.engine('html', require('ejs').renderFile);
-app.set('vieww engine', 'html')
+app.set('view engine', 'html')
 
 app.use('/', (req, res) =>{
     res.render('index.html');
@@ -16,7 +17,8 @@ app.use('/', (req, res) =>{
 
 let messages =[];
 
-io.on('connection', socket =>{
+
+io.sockets.on('connection', socket =>{
     console.log(`Socket Conectado ${socket.id}`);
 
     socket.emit('previousMessages', messages);
@@ -27,4 +29,4 @@ io.on('connection', socket =>{
     });
 });
 
-app.listen(process.env.PORT || 3000, () => console.log('Servidor OK'));
+server.listen(process.env.PORT || 3000, () => console.log('Servidor OK'));
